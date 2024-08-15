@@ -1,0 +1,72 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DB_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model Pdf {
+  createdAt  DateTime    @default(now())
+  fileName   String?
+  fileSize   Int?
+  fileUrl    String?
+  flashcards Flashcard[]
+  id         String      @id @default(cuid())
+  mindMaps   MindMap[]
+  questions  Question[]
+  summaries  Summary[]
+  updatedAt  DateTime    @updatedAt
+}
+
+model Flashcard {
+  content   String?
+  createdAt DateTime @default(now())
+  id        String   @id @default(cuid())
+  pdf       Pdf?     @relation(fields: [pdfId], references: [id])
+  pdfId     String?
+  title     String?
+  updatedAt DateTime @updatedAt
+}
+
+model Summary {
+  content   String?
+  createdAt DateTime @default(now())
+  id        String   @id @default(cuid())
+  pdf       Pdf?     @relation(fields: [pdfId], references: [id])
+  pdfId     String?
+  updatedAt DateTime @updatedAt
+}
+
+model MindMap {
+  createdAt DateTime @default(now())
+  id        String   @id @default(cuid())
+  nodes     Json?
+  pdf       Pdf?     @relation(fields: [pdfId], references: [id])
+  pdfId     String?
+  title     String?
+  updatedAt DateTime @updatedAt
+}
+
+model Question {
+  answer    String?
+  createdAt DateTime @default(now())
+  id        String   @id @default(cuid())
+  pdf       Pdf?     @relation(fields: [pdfId], references: [id])
+  pdfId     String?
+  question  String?
+  updatedAt DateTime @updatedAt
+}
+
+model User {
+  createdAt DateTime @default(now())
+  email     String?  @unique
+  firstName String?
+  id        String   @id @default(cuid())
+  lastName  String?
+  password  String
+  roles     Json
+  updatedAt DateTime @updatedAt
+  username  String   @unique
+}
